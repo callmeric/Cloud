@@ -1,0 +1,127 @@
+.pop-download .btn-goto,
+.pop-download .btn-send {
+    cursor: pointer;
+	background: url(/vipstyle/nr/box/img/app-download.png) no-repeat;
+}
+
+.pop-download {
+	padding: 35px 50px 35px 20px;
+	overflow: hidden;
+	_zoom: 1;
+}
+.pop-download .qrcode {
+	width: 221px;
+	text-align: center;
+	float: left;
+	overflow: hidden;
+}
+.pop-download .qrcode p {
+	color: #333;
+	margin-top: 5px;
+}
+.pop-download .info {
+	float: left;
+	padding-left: 50px;
+	width: 240px;
+	border-left: 1px solid #e6e6e6;
+}
+
+.pop-download .way-2,
+.pop-download .way-3 {
+	margin-top: 30px;
+}
+.pop-download .way h4{
+	font-size: 16px;
+	line-height: 16px;
+	color: #333
+}
+.pop-download .way .desc {
+	padding: 5px 0;
+	color: #999;
+}
+.pop-download .btn-goto,
+.pop-download .btn-send {
+	color: #fff;
+	font-family: "microsoft yahei";
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 1px 2px;
+}
+.pop-download .btn-goto {
+	display: block;
+	width: 140px;
+	height: 50px;
+	background-position: 0 -80px;
+	font-size: 16px;
+	margin-top: 24px;
+}
+.pop-download .phonenum {
+	margin-top: 5px;
+}
+.pop-download .ipt-phonenum {
+	float: left;
+	width: 148px;
+	padding: 0 5px;
+	height: 28px;
+	border: 1px solid #b3b3b3;
+	line-height: 28px\9;
+	font-family: "microsoft yahei";
+	font-size: 18px;
+	background-color: #f2f2f2;
+}
+.pop-download .btn-send {
+	float: left;
+	display: block;
+	width: 60px;
+	height: 30px;
+	background-position: 0 -132px;
+	margin-left: 10px;
+}
+
+.pop-download .sms-captcha, .sms-error, .sms-info{
+    margin: 5px 0;
+}
+.pop-download .sms-captcha *{
+    vertical-align: middle;
+}
+.pop-download .sms-captcha input{
+    width: 50px;
+    padding: 0 5px;
+    height: 28px;
+    border: 1px solid #b3b3b3;
+    line-height: 28px\9;
+    font-family: "microsoft yahei";
+    font-size: 18px;
+    background-color: #f2f2f2;
+}
+.pop-download .sms-error{
+    color: red;
+}
+
+.download-pop{
+	width: 484px;margin-left: -242px;
+}
+.download-pop .download-pop-con{
+	height: 270px;
+}
+
+.download-pop .download-pop-con ul{
+	overflow: hidden;
+	zoom:1;
+	margin-top: 22px;
+}
+.download-pop .download-pop-con .download-platform-item{
+	float: left;
+	height: 227px;
+	margin-left: 52px;
+	cursor:pointer;
+}
+.download-pop .download-pop-con .download-platform-item .phone-wrap{width: 106px;height: 227px;background-image: url(/vipstyle/nr/box/home/img/slice/phone-wrap.png);}
+.download-pop .download-pop-con .download-platform-item .phone-wrap img{width: 88px;height: 88px;margin: 58px 0 0 9px;}
+.download-pop .download-pop-con .download-platform-item .phone-wrap span{display: block;text-align: center;}
+.download-pop .download-pop-con .download-platform-item .icon{display: block;width: 42px;height: 36px;margin: 80px auto 0}
+.download-pop .download-pop-con .download-platform-item .icon-win{background-image: url(/vipstyle/nr/box/home/img/slice/icon-win.png);}
+.download-pop .download-pop-con .download-platform-item .icon-ios{background-image: url(/vipstyle/nr/box/home/img/slice/icon-ios.png);}
+.download-pop .download-pop-con .download-platform-item p{margin-top: 14px;}
+.download-pop .download-pop-con .ios-item{margin-left: 86px;}/*  |xGv00|91ef3db8323fd18faa5fa8807202f392 */

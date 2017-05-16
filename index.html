@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>云盘</title>
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+		<script src="js/data.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/render.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div class="wrap">
+			<!--header-->
+			<div class="header">
+				<div class="headerlogo">
+					<a href="javascript:;"></a>
+				</div>
+				<div class="download" title="文件管理">
+				</div>
+				<div class="search">
+					<span>
+					</span>
+					<input type="text" name="search" id="search" value="" placeholder="输入文件名"/>
+				</div>
+				<div class="add">
+					<span>
+					</span>
+					添加
+				</div>
+				<ul class="caozuo">
+					<li id="createFolder" class="newfolder">新建文件夹</li>
+					<li class="upload">上传文件</li>
+					<li class="download1">下载文件</li>
+				</ul>
+				<div class="orderway">
+					<div class="box">
+						<div class="left">
+							<span id="listing" title="列表试图" ></span>
+							<span id="thumbnail" title="缩略图视图" class="active"></span>
+						</div>
+						<div class="right">
+							<span id="timer" title="按时间排序" class="active"></span>
+							<span id="alpha" title="按字母排序" ></span>
+						</div>
+					</div>
+				</div>
+				<div class="editbox">
+					<div class="headerlogo">
+						<a href="javascript:;"></a>
+					</div>
+					<a href="javascript:;" class="cancel">取消选择</a>
+					<p>选择了<span class="count">N</span>项</p>
+					<ul class="editwrap">
+						<li>下载</li>
+						<li>移动到</li>
+						<li id="rename">重命名</li>
+						<li>删除</li>
+					</ul>
+				</div>
+			</div>
+			<!--contentbox-->
+			<div class="contentwrap">
+				<!--左侧导航栏-->
+				<div class="navbar">
+					<!--头像框-->
+					<div class="iconpart">
+						<a href="javascript:;">
+							<div id="usericon"></div>
+						</a>
+						<div id="changeicon" class="active">
+							更换头像
+						</div>
+					</div>
+					<!--文件菜单栏-->
+					<div class="guanli">
+						<div class="lately">
+							最近
+						</div>
+						<p class="t1">
+							文件
+						</p>
+						<ul class="type">
+							<li id="all" class="click">全部</li>
+							<li id="ofiles">文档</li>
+							<li id="opics">图片</li>
+							<li id="ovideos">视频</li>
+							<li id="onotes">笔记</li>
+							<li id="omusic">音乐</li>
+						</ul>
+						<p class="t1">
+							照片
+						</p>
+						<ul class="type">
+							<li id="otime">时间</li>
+						</ul>
+						<p class="t1">
+							我的
+						</p>
+						<ul class="type">
+							<li id="dumb">回收站</li>
+						</ul>
+					</div>
+				</div>
+				<!--主要内容-->
+				<div id="maincon">
+					<div class="minibar">
+						<div id="allchecked">
+						</div>
+						<i></i>
+						<ul class="bread">
+							<li class="top">微云</li>
+							<li class="back">返回上层</li>
+						</ul>
+					</div>
+					<div class="contentbg">
+						<h4>
+							暂无文件
+						</h4>
+						<p>
+							请点击右上角的“添加”按钮添加~
+						</p>
+					</div>
+					<!--thumb是缩略图 list是列表-->
+					<div id="orderway" class="thumb">
+						<ul class="folder"></ul>
+						<ul class="file"></ul>
+						<div id="choosebox"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			//获取元素
+			var download = document.querySelector('.header .download');
+			var search = document.querySelector('.header .search');
+			var searchlogo = document.querySelector('.header .search span');
+			var oadd = document.querySelector('.header .add');
+			var caozuo = document.querySelector('.header .caozuo');
+			var timer = null;
+			var way_left = document.querySelector('.header .orderway .box .left').getElementsByTagName('span');
+			var way_right = document.querySelector('.header .orderway .box .right').getElementsByTagName('span');
+			var addHover = document.querySelectorAll('.header .caozuo li');
+			var orderway = document.getElementById('orderway');
+			var createFolder = document.getElementById('createFolder');
+			var folder = document.getElementsByClassName('folder')[0];
+			var files = document.getElementsByClassName('file')[0];
+			var guanli = document.getElementsByClassName('guanli')[0];
+			var leftbtn = guanli.getElementsByTagName('li');
+			var onotes = document.getElementById('onotes');
+			var minibar = document.getElementsByClassName('minibar')[0];
+			var ofiles = document.getElementById('ofiles');
+			var all = document.getElementById('all');
+			var opics = document.getElementById('opics');
+			var ovideos = document.getElementById('ovideos');	
+			var omusic = document.getElementById('omusic');
+			var choosebox = document.getElementById('choosebox');
+			var maincon = document.getElementById('maincon');
+			var lis = orderway.getElementsByTagName('li');
+			var checkboxs = orderway.getElementsByTagName('i');
+			var editbox = document.getElementsByClassName('editbox')[0];
+			var count = document.getElementsByClassName('count')[0];
+			var contentwrap = document.getElementsByClassName('contentwrap')[0];
+			var cancel = document.getElementsByClassName('cancel')[0];
+			var rename = document.getElementById('rename');
+			var bread = document.getElementsByClassName('bread')[0];
+			var lighting = bread.getElementsByTagName('li');
+			//记录进入的每一层
+			var list = [];
+			//记录当前是那一层
+			var arr = data;
+			var allchecked = document.getElementById('allchecked');
+			var num = 0; //用来记录editbox共勾选了几个li
+			//基本鼠标滑过滑出事件
+			download.onmouseover = function(){
+				download.style.backgroundImage = 'url(img/downloadlogo2.png)';
+				download.style.borderColor = '#0098df';
+			};
+			download.onmouseout = function(){
+				download.style.backgroundImage = 'url(img/downloadlogo1.png)';
+				download.style.borderColor = '';
+			};
+			
+			search.onmouseover = function(){
+				search.style.borderColor = '#0098df';
+				searchlogo.style.backgroundImage ='url(img/searchlogo2.png)';
+			};
+			search.onmouseout = function(){
+				search.style.borderColor = '';
+				searchlogo.style.backgroundImage ='url(img/searchlogo1.png)';
+			};
+			
+			oadd.onmouseover = function(){
+				oadd.style.background = '#2688EA';
+				caozuo.style.display = 'block';
+				clearInterval(timer);
+			};
+			oadd.onmouseout = function(){
+				oadd.style.background = '';
+				timer = setInterval(function(){
+					caozuo.style.display = 'none';
+				},300)
+			};
+			caozuo.onmouseover = function(){
+				clearInterval(timer);
+			};
+			caozuo.onmouseout = function(){
+				timer = setInterval(function(){
+					caozuo.style.display = 'none';
+				},300)
+			};
+			//列表排序
+			
+			way_left[0].onclick = function(){
+				way_left[0].className = 'active';
+				way_left[1].className = '';
+				orderway.className = 'list';
+			};
+			
+			//缩略图排序
+			way_left[1].onclick = function(){
+				way_left[1].className = 'active';
+				way_left[0].className = '';
+				orderway.className = 'thumb';
+			};
+			
+			for(var i=0;i<way_left.length;i++){
+				way_right[i].onclick = function(){
+					for(var j=0;j<way_right.length;j++){
+						way_right[j].className = '';
+					}
+					this.className = 'active';
+				};
+			}for(var i=0;i<addHover.length;i++){
+				addHover[i].onmouseover = function(){
+					this.style.backgroundColor = 'rgba(59,147,255,.06)';
+				};
+				addHover[i].onmouseout = function(){
+					this.style.backgroundColor = '';
+				};
+			}
+		var len = data.length;
+		var contentbg = document.querySelector('.contentwrap #maincon .contentbg');
+		
+		
+		//初始状态渲染
+		render(data);
+		//如果页面是空的 显示div提醒添加内容
+		if(folder.innerHTML==''){
+			contentbg.style.display = 'block';
+		}
+		
+		
+		//以下为左侧导航栏事件
+		
+		//左侧点击全部
+		all.onclick = function(){
+			allonOff = false;
+			for(var i=0;i<leftbtn.length;i++){
+				leftbtn[i].className = '';
+			}
+			this.className = 'click';
+			render(data);
+			if(folder.innerHTML==''){
+			contentbg.style.display = 'block';
+			}else{
+				contentbg.style.display = 'none';
+			}
+			gouxuan();
+		};
+		//点击左侧文档
+		ofiles.onclick = function(){
+			allonOff = false;
+			for(var i=0;i<leftbtn.length;i++){
+				leftbtn[i].className = '';
+			}
+			this.className = 'click';
+			folder.innerHTML = '';
+			files.innerHTML = '';
+			renderfile(data);
+			
+			if(folder.innerHTML==''&&files.innerHTML==''){
+			contentbg.style.display = 'block';
+			}else{
+				contentbg.style.display = 'none';
+			}
+			function renderfile(data){
+				data.forEach(function(ele){
+				//创建li
+				var lis = document.createElement('li');
+				//创建li下的div(用来包文字的)
+				var divs = document.createElement('div');
+				//创建li下的i标签(模拟checkbox)
+				var checkbox = document.createElement('i');
+				//创建li下面的h4标签
+				var h4s = document.createElement('h4');
+				var inputs = document.createElement('input');
+				//把文件添加到页面上 以类名判断添加到哪个ul里面
+				if(ele.fileType=='word'){
+					h4s.innerHTML = ele.name;
+					lis.style.backgroundImage = 'url('+ele.ico+')';
+					lis.appendChild(divs);
+					lis.appendChild(inputs);
+					lis.appendChild(checkbox);
+					lis.appendChild(h4s);
+					files.appendChild(lis);
+				}else if(ele.fileType=='txt'){
+					h4s.innerHTML = ele.name;
+					lis.style.backgroundImage = 'url('+ele.ico+')';
+					lis.appendChild(divs);
+					lis.appendChild(inputs);
+					lis.appendChild(checkbox);
+					lis.appendChild(h4s);
+					files.appendChild(lis);
+				}
+				});
+			}
+			gouxuan();
+		}
+		//点击显示图片
+		opics.onclick = function(){
+			allonOff = false;
+			for(var i=0;i<leftbtn.length;i++){
+				leftbtn[i].className = '';
+			}
+			this.className = 'click';
+			folder.innerHTML = '';
+			files.innerHTML = '';
+			renderfile(data);
+			
+			if(folder.innerHTML==''&&files.innerHTML==''){
+			contentbg.style.display = 'block';
+			}else{
+				contentbg.style.display = 'none';
+			}
+			function renderfile(data){
+				data.forEach(function(ele){
+				//创建li
+				var lis = document.createElement('li');
+				//创建li下的div(用来包文字的)
+				var divs = document.createElement('div');
+				//创建li下的i标签(模拟checkbox)
+				var checkbox = document.createElement('i');
+				//创建li下面的h4标签
+				var h4s = document.createElement('h4');
+				var inputs = document.createElement('input');
+				//把文件添加到页面上 以类名判断添加到哪个ul里面
+				if(ele.fileType=='png'){
+					h4s.innerHTML = ele.name;
+					lis.style.backgroundImage = 'url('+ele.ico+')';
+					lis.appendChild(divs);
+					lis.appendChild(inputs);
+					lis.appendChild(checkbox);
+					lis.appendChild(h4s);
+					files.appendChild(lis);
+				}else if(ele.fileType=='jpg'){
+					h4s.innerHTML = ele.name;
+					lis.style.backgroundImage = 'url('+ele.ico+')';
+					lis.appendChild(divs);
+					lis.appendChild(inputs);
+					lis.appendChild(checkbox);
+					lis.appendChild(h4s);
+					files.appendChild(lis);
+				}
+				});
+			}
+			gouxuan();
+		}
+		ovideos.onclick = function(){
+			allonOff = false;
+			for(var i=0;i<leftbtn.length;i++){
+				leftbtn[i].className = '';
+			}
+			this.className = 'click';
+			folder.innerHTML = '';
+			files.innerHTML = '';
+			renderfile(data);
+			
+			if(folder.innerHTML==''&&files.innerHTML==''){
+			contentbg.style.display = 'block';
+			}else{
+				contentbg.style.display = 'none';
+			}
+			function renderfile(data){
+				data.forEach(function(ele){
+				//创建li
+				var lis = document.createElement('li');
+				//创建li下的div(用来包文字的)
+				var divs = document.createElement('div');
+				//创建li下的i标签(模拟checkbox)
+				var checkbox = document.createElement('i');
+				//创建li下面的h4标签
+				var h4s = document.createElement('h4');
+				var inputs = document.createElement('input');
+				//把文件添加到页面上 以类名判断添加到哪个ul里面
+				if(ele.fileType=='avi'){
+					h4s.innerHTML = ele.name;
+					lis.style.backgroundImage = 'url('+ele.ico+')';
+					lis.appendChild(divs);
+					lis.appendChild(inputs);
+					lis.appendChild(checkbox);
+					lis.appendChild(h4s);
+					files.appendChild(lis);
+				}else if(ele.fileType=='flv'){
+					h4s.innerHTML = ele.name;
+					lis.style.backgroundImage = 'url('+ele.ico+')';
+					lis.appendChild(divs);
+					lis.appendChild(inputs);
+					lis.appendChild(checkbox);
+					lis.appendChild(h4s);
+					files.appendChild(lis);
+				}
+				});
+			}
+			gouxuan();
+		}
+		//点击音乐
+		omusic.onclick = function(){
+			allonOff = false;
+			for(var i=0;i<leftbtn.length;i++){
+				leftbtn[i].className = '';
+			}
+			this.className = 'click';
+			folder.innerHTML = '';
+			files.innerHTML = '';
+			renderfile(data);
+			
+			if(folder.innerHTML==''&&files.innerHTML==''){
+			contentbg.style.display = 'block';
+			}else{
+				contentbg.style.display = 'none';
+			}
+			function renderfile(data){
+				data.forEach(function(ele){
+				//创建li
+				var lis = document.createElement('li');
+				//创建li下的div(用来包文字的)
+				var divs = document.createElement('div');
+				//创建li下的i标签(模拟checkbox)
+				var checkbox = document.createElement('i');
+				//创建li下面的h4标签
+				var h4s = document.createElement('h4');
+				var inputs = document.createElement('input');
+				//把文件添加到页面上 以类名判断添加到哪个ul里面
+				if(ele.fileType=='mp3'){
+					h4s.innerHTML = ele.name;
+					lis.style.backgroundImage = 'url('+ele.ico+')';
+					lis.appendChild(divs);
+					lis.appendChild(inputs);
+					lis.appendChild(checkbox);
+					lis.appendChild(h4s);
+					files.appendChild(lis);
+				}else if(ele.fileType=='wma'){
+					h4s.innerHTML = ele.name;
+					lis.style.backgroundImage = 'url('+ele.ico+')';
+					lis.appendChild(divs);
+					lis.appendChild(inputs);
+					lis.appendChild(checkbox);
+					lis.appendChild(h4s);
+					files.appendChild(lis);
+				}
+				});
+			}
+			gouxuan();
+		}
+		//点击笔记
+		onotes.onclick = function(){
+			allonOff = false;
+			for(var i=0;i<leftbtn.length;i++){
+				leftbtn[i].className = '';
+			}
+			this.className = 'click';
+			folder.innerHTML = '';
+			files.innerHTML = '';
+			contentbg.style.display = 'none';
+			gouxuan();
+		}
+		
+		
+		//点击全选
+		
+		var allonOff = false;
+		
+		allchecked.onmousedown = function(ev){
+			ev.cancelBubble = true;
+		}
+		allchecked.onmouseup = function(ev){
+			ev.cancelBubble = true;
+		}
+		
+		allchecked.onclick = function(){
+			num = checkboxs.length;
+			count.innerHTML = num;
+			//如果开关是关的 打开全选的开关
+			if(!allonOff){
+				this.className = 'checked';
+				for(var i=0;i<checkboxs.length;i++){
+					checkboxs[i].onOff = true;
+					checkboxs[i].style.display = 'block';
+					checkboxs[i].parentNode.className = 'choose';
+				}
+				editbox.style.display = 'block';
+			}else{
+				this.className = '';
+				for(var i=0;i<checkboxs.length;i++){
+					checkboxs[i].style.display = '';
+					checkboxs[i].parentNode.className = '';
+					checkboxs[i].onOff = false;
+					num=0;
+				}
+				editbox.style.display = '';
+			}
+			allonOff = !allonOff; 
+		};
+		
+		//勾选函数
+		gouxuan();
+		var divs = orderway.getElementsByTagName('div');
+//		for(var i=0;i<checkboxs.length;i++){
+//				divs[i].onmousedown = function(ev){
+//					ev.cancelBubble = true;
+//				};
+//			}
+		function gouxuan(ev){
+			for(var i=0;i<checkboxs.length;i++){
+				lis[i].onmousedown = function(ev){
+					ev.cancelBubble = true;
+				};
+			checkboxs[i].onclick = function(ev){
+				ev.cancelBubble = true;
+				if(!this.onOff){
+					num++
+					this.style.display = 'block';
+					this.parentNode.className = 'choose';
+				}else{
+					num--
+					this.parentNode.className = '';
+					this.style.display = '';
+					this.style.border = '';
+				}
+				if(num==checkboxs.length){
+						allchecked.className = 'checked';
+						allonOff = true;
+					}else{
+						allchecked.className = '';
+						allonOff = false;
+					}
+				if(num!=0){
+						editbox.style.display = 'block';
+						count.innerHTML = num;
+				}else{
+						editbox.style.display = '';
+					}
+				this.onOff = !this.onOff;
+			};
+		}
+	};
+	//全选函数
+		function quanxuan(){
+			console.log(this.onOff);
+			if(!allonOff){
+				this.className = 'checked';
+				for(var i=0;i<checkboxs.length;i++){
+					checkboxs[i].onOff = true;
+					checkboxs[i].style.display = 'block';
+					checkboxs[i].parentNode.className = 'choose';
+					count.innerHTML = checkboxs.length;
+				}
+				editbox.style.display = 'block';
+			}else{
+				this.className = '';
+				for(var i=0;i<checkboxs.length;i++){
+					checkboxs[i].style.display = '';
+					checkboxs[i].parentNode.className = '';
+					checkboxs[i].onOff = true;
+				}
+				editbox.style.display = '';
+			}
+			allonOff = !allonOff; 
+		};
+		
+		//框选事件
+		contentwrap.onmousedown = function(ev){
+			var disx = ev.clientX;
+			var disy = ev.clientY;
+			//对元素进行定位，并显示出来。
+			choosebox.style.left = disx-200+'px';
+			choosebox.style.top = disy-64+'px';
+			choosebox.style.display = 'block';
+			allchecked.className = '';
+			for(var i=0;i<checkboxs.length;i++){
+				checkboxs[i].onOff = false;
+				if(!this.onOff){
+					checkboxs[i].parentNode.className = '';
+					checkboxs[i].style.display = '';
+				}
+			}
+			editbox.style.display = 'none';
+			document.onmousemove = function(ev){
+				//计算元素的宽度
+				var width = ev.clientX - disx;
+				var height = ev.clientY - disy;
+				if(width<0){
+					choosebox.style.left = ev.clientX-200+'px';
+				}
+				if(height<0){
+					choosebox.style.top = ev.clientY-64+'px';
+				}
+				choosebox.style.width = Math.abs(width)+'px';
+				choosebox.style.height = Math.abs(height)+'px';
+				for(var i=0;i<lis.length;i++){
+					if(collision(lis[i],choosebox)){
+						lis[i].childNodes[2].onOff = false;
+						lis[i].className = 'choose';
+					}else{
+						lis[i].childNodes[2].onOff = true;
+						lis[i].className = '';
+						lis[i].children[0].className = '';
+					}
+						lis[i].childNodes[2].onOff = !lis[i].childNodes[2].onOff;
+				}
+				return false;
+			};
+			
+			document.onmouseup = function(ev){
+				ev.cancelBubble = true;
+				document.onmousemove = null;
+				num = 0;
+				for(var i=0;i<checkboxs.length;i++){
+					if(checkboxs[i].onOff){
+						num++
+					}
+					if(num==checkboxs.length){
+						allchecked.className = 'checked';
+						allonOff = true;
+					}else{
+						allchecked.className = '';
+						allonOff = false;
+					}
+					if(num!=0){
+						editbox.style.display = 'block';
+						count.innerHTML = num;
+					}else{
+						editbox.style.display = '';
+					}
+				}
+				choosebox.style.cssText = '';
+			};
+		}
+		
+		//取消选择
+		cancel.onclick = function(){
+			for(var i=0;i<checkboxs.length;i++){
+				checkboxs[i].onOff = false;
+				checkboxs[i].style.display = '';
+				checkboxs[i].parentNode.className = '';
+			}
+			editbox.style.display = '';
+			allonOff = false;
+			allchecked.className = '';
+		};
+		
+		
+		//框选函数
+		function collision(obj1,obj2){
+			if(getPos(obj1).bottom<getPos(obj2).top||getPos(obj1).left>getPos(obj2).right||getPos(obj1).top>getPos(obj2).bottom||getPos(obj1).right<getPos(obj2).left){
+				//碰不上
+				return false;
+			}else{
+				//碰上
+				return true;
+			}
+		}
+		function getPos(obj){
+			return obj.getBoundingClientRect();
+		}
+		
+		
+		//以下是文件夹操作相关
+		
+		//点击返回上一层
+		var back = document.getElementsByClassName('back')[0];
+		back.onclick = function(){
+			var data = list.pop();
+			if(!data)return;
+			render(data);
+			gouxuan();
+			//重新记录这一层在添加文件夹的时候用
+			arr = data;
+		};
+		
+		//点击返回顶层
+		var otop = document.getElementsByClassName('top')[0];
+		otop.onclick = function(ev){
+			render(data);
+			for(var i=0;i<checkboxs.length;i++){
+				checkboxs[i].onclick = function(ev){
+					ev.cancelBubble = true;
+				};
+			}
+			gouxuan();
+		};
+		
+		//创建文件夹
+		createFolder.onclick = function(){
+			//创建li
+			var lis = document.createElement('li');
+			//创建li下的div(用来包文字的)
+			var divs = document.createElement('div');
+			//创建li下的i标签(模拟checkbox)
+			var checkbox = document.createElement('i');
+			//创建li下面的h4标签
+			var h4s = document.createElement('h4');
+			//创建hover背景层
+			var mask = document.createElement('p');
+			//添加input用来重命名
+			var inputs = document.createElement('input');
+			inputs.type = "text";
+			lis.appendChild(divs);
+			lis.appendChild(inputs);
+			lis.appendChild(checkbox);
+			lis.appendChild(mask);
+			folder.appendChild(lis);
+			//给li加class 使其下面的input显示
+			lis.className = 'new';
+			//给input焦点
+			inputs.focus();
+			//当input失去焦点时执行
+			inputs.onblur = function(){
+				if(inputs.value==''){
+					folder.removeChild(lis);
+				}else{
+					arr.push({
+					name:inputs.value,
+					type:'folder',
+					ico:'img/folder.png',
+					id:'_id'+Math.random(),		
+					child:[]
+					});
+					render(arr);
+					//给当前渲染页面添勾选
+					gouxuan();
+				}
+			};
+			//把左边对焦到全选界面
+			for(var i=0;i<leftbtn.length;i++){
+				leftbtn[i].className = '';
+			}
+			all.className = 'click';
+		};
+		
+		//点击重命名
+		rename.onclick = function(){
+			var xz = 0;
+			for(var i=0;i<lis.length;i++){
+				if(lis[i].className=='choose'){
+					xz++;
+				}
+			}
+			if(xz>1){
+				alert('只能重命名一个文件');
+				return;
+			}else{
+				for(var j=0;j<lis.length;j++){
+					if(lis[j].className=='choose'){
+						lis[j].children[1].style.display = 'block';
+						lis[j].children[1].focus();
+						lis[j].children[1].value = data[j].name;
+					}
+				}
+			}
+		};
+		</script>
+	</body>
+</html>

@@ -1,0 +1,76 @@
+//默认数据
+var data = [
+		{
+			name:'新建文件夹',
+			type:'folder',
+			ico:'img/folder.png',
+			id:1,
+			pid:0,
+			child:[]
+		},
+		{
+			name:'功能介绍',
+			type:'file',
+			ico:'img/filelogo01.png',
+			fileType:'txt',
+			id:1,
+			pid:0,
+		},
+		{
+			name:'word文档',
+			type:'file',
+			ico:'img/filelogo02.png',
+			fileType:'word',
+			id:5,
+			pid:0,
+		},
+		{
+			name: '我的音乐',
+			type: 'folder',
+			ico:'img/folder.png',
+			id: 3,
+			pid: 0,
+			child:[
+				{
+					name:'1874.mp3',
+					type:'file',
+					ico:'img/musiclogo01.png',
+					fileType:'txt',
+					id:'3-1',
+					pid:3
+				},
+				{
+					name:'成都.mp3',
+					type:'file',
+					ico:'img/musiclogo01.png',
+					fileType:'mp3',
+					id:'3-2',
+					pid:3
+				},
+				{
+					name:'1.mp3',
+					type:'file',
+					ico:'img/musiclogo01.png',
+					fileType:'mp3',
+					id:'3-3',
+					pid:3
+				}
+			]
+		},
+		{
+			name:'Fire.mp3',
+			type:'file',
+			ico:'img/musiclogo01.png',
+			fileType:'mp3',
+			id:4,
+			pid:0
+		},
+		{
+			name:'视频文件',
+			type:'file',
+			ico:'img/videologo01.png',
+			fileType:'flv',
+			id:6,
+			pid:0
+		}
+	];
